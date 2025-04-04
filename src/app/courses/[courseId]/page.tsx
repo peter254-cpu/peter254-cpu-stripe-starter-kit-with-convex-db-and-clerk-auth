@@ -13,9 +13,7 @@ import { Download, FileText, FileTextIcon, Lock, PlayCircle } from "lucide-react
 
 const CourseDetailPage = ({ params }: { params: { courseId: string } }) => {
 	const { user, isLoaded: isUserLoaded } = useUser();
-	
-	// Ensure courseId is properly typed for Convex
-	const courseId = params.courseId as Id<"courses">;
+	const courseId = params.courseId as Id<"courses">; // ✅ Convert to Convex ID
 
 	// Fetch user data
 	const userData = useQuery(api.users.getUserByClerkId, { clerkId: user?.id ?? "" });
