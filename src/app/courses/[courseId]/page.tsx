@@ -13,7 +13,9 @@ import { Download, FileText, FileTextIcon, Lock, PlayCircle } from "lucide-react
 
 const CourseDetailPage = ({ params }: { params: { courseId: string } }) => {
 	const { user, isLoaded: isUserLoaded } = useUser();
-	const courseId = params.courseId as Id<"courses">; // ✅ Convert to Convex ID
+
+	// Ensure courseId is converted to the correct Id type
+	const courseId = params.courseId as Id<"courses">;
 
 	// Fetch user data
 	const userData = useQuery(api.users.getUserByClerkId, { clerkId: user?.id ?? "" });
@@ -21,11 +23,11 @@ const CourseDetailPage = ({ params }: { params: { courseId: string } }) => {
 	// Fetch course data
 	const courseData = useQuery(api.courses.getCourseById, { courseId });
 
-	// Fetch user access to the course
+	// Fetch user access
 	const userAccess = useQuery(
 		api.users.getUserAccess,
 		userData && userData._id
-			? { userId: userData._id, courseId }
+			? { userId: userData._id as Id<"users">, courseId }
 			: "skip"
 	);
 
