@@ -13,6 +13,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Download, FileText, FileTextIcon, Lock, PlayCircle } from "lucide-react";
 
+//@ts-expect-error
 const CourseDetailPage = ({ params }: { params: { courseId: Id<"courses"> } }) => {
 	const { user, isLoaded: isUserLoaded } = useUser();
 	//@ts-expect-error
