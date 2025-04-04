@@ -11,22 +11,24 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Download, FileText, FileTextIcon, Lock, PlayCircle } from "lucide-react";
 
-const CourseDetailPage = ({ params }: { params: { courseId: Id<"courses"> } }) => {
+const CourseDetailPage = ({ params }: { params: { courseId: string } }) => {
 	const { user, isLoaded: isUserLoaded } = useUser();
-	const { courseId } = params;
+	
+	// Ensure courseId is properly typed for Convex
+	const courseId = params.courseId as Id<"courses">;
 
 	// Fetch user data
 	const userData = useQuery(api.users.getUserByClerkId, { clerkId: user?.id ?? "" });
 
 	// Fetch course data
-	const courseData = useQuery(api.courses.getCourseById, { courseId: courseId as Id<"courses"> });
+	const courseData = useQuery(api.courses.getCourseById, { courseId });
 
 	// Fetch user access to the course
 	const userAccess = useQuery(
 		api.users.getUserAccess,
 		userData && userData._id
-		? { userId: userData._id, courseId: courseId as Id<"courses"> }
-		: "skip"
+			? { userId: userData._id, courseId }
+			: "skip"
 	);
 
 	// Handle loading and error states
