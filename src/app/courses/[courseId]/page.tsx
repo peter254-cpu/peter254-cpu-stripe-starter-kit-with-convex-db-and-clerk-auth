@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 
-import {use } from 'react'
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
@@ -13,28 +11,25 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Download, FileText, FileTextIcon, Lock, PlayCircle } from "lucide-react";
 
-//@ts-expect-error
 const CourseDetailPage = ({ params }: { params: { courseId: Id<"courses"> } }) => {
 	const { user, isLoaded: isUserLoaded } = useUser();
-	//@ts-expect-error
-	const unwrappedParams = use(params);
+	const { courseId } = params;
 
+	// Fetch user data
 	const userData = useQuery(api.users.getUserByClerkId, { clerkId: user?.id ?? "" });
-	//@ts-expect-error
-	const courseData = useQuery(api.courses.getCourseById, { courseId: unwrappedParams.courseId });
 
+	// Fetch course data
+	const courseData = useQuery(api.courses.getCourseById, { courseId: courseId as Id<"courses"> });
+
+	// Fetch user access to the course
 	const userAccess = useQuery(
 		api.users.getUserAccess,
-		userData
-			? {
-					userId: userData._id,
-					courseId: params.courseId,
-				}
-			: "skip"
-	) || { hasAccess: false };
+		userData && userData._id
+		? { userId: userData._id, courseId: courseId as Id<"courses"> }
+		: "skip"
+	);
 
-	// undefined => loading, convex
-
+	// Handle loading and error states
 	if (!isUserLoaded || courseData === undefined) {
 		return <CourseDetailSkeleton />;
 	}
@@ -57,7 +52,7 @@ const CourseDetailPage = ({ params }: { params: { courseId: Id<"courses"> } }) =
 				<CardContent>
 					<CardTitle className='text-3xl mb-4'>{courseData.title}</CardTitle>
 
-					{userAccess.hasAccess ? (
+					{userAccess?.hasAccess ? (
 						<>
 							<p className='text-gray-600 mb-6'>{courseData.description}</p>
 							<div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-8'>
@@ -92,7 +87,7 @@ const CourseDetailPage = ({ params }: { params: { courseId: Id<"courses"> } }) =
 								</p>
 								<p className='text-2xl font-bold mb-4'>${courseData.price.toFixed(2)}</p>
 
-                                Purchase
+								Purchase
 							</div>
 						</div>
 					)}
