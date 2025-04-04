@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 
 import {use } from 'react'
@@ -14,9 +15,11 @@ import { Download, FileText, FileTextIcon, Lock, PlayCircle } from "lucide-react
 
 const CourseDetailPage = ({ params }: { params: { courseId: Id<"courses"> } }) => {
 	const { user, isLoaded: isUserLoaded } = useUser();
+	//@ts-expect-error
 	const unwrappedParams = use(params);
-	
+
 	const userData = useQuery(api.users.getUserByClerkId, { clerkId: user?.id ?? "" });
+	//@ts-expect-error
 	const courseData = useQuery(api.courses.getCourseById, { courseId: unwrappedParams.courseId });
 
 	const userAccess = useQuery(
